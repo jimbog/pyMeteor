@@ -13,7 +13,12 @@ Tested on:
 Feature List
 ============
 
-Implements DDP (pre1) specification.  
-Provides a reactive collections class
-Some minimongo like functionality
-SRP based login
+ - Implements DDP (pre1) specification.
+   - Connect + version transaction
+   - Implements all ddp messages
+   - Sync/async method calls
+   - Subscriptions and subscription handles
+ - Beginning minimongo implementation
+   - insert/find/findOne/remove
+   - Only supports basic selectors
+ - SRP based login, interfacing with accounts-password
