@@ -3,6 +3,7 @@ import sys
 
 def dbPrint(*args, **kwargs):
     print(*args, **kwargs)
+    # Like a poor house guest, windows dosen't flush
     sys.stdout.flush()
 
 
