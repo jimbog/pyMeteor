@@ -1,11 +1,8 @@
-import json, pprint, socket, sys, time, uuid, ws4py
+import json, pprint, socket, time, uuid
 from ws4py.client.threadedclient import WebSocketClient
 
-from .dbPrint import dbPrint, Printer
 from . import srp
-
-# Print the WS4PY version we are using, and flush (win)
-dbPrint("WS4Py version: " + ws4py.__version__)
+from .dbPrint import Printer
 
 
 class ReactiveDict(dict):
@@ -45,7 +42,6 @@ class ReactiveDict(dict):
 
     def setReactive(self, enabled):
         self.reactive = enabled
-
 
 
 class DDPCollection(list):
@@ -296,7 +292,7 @@ class DDPClient(WebSocketClient):
     def connectDDP(self, timeout=3, isReconnect=False):
         if isReconnect:
             self._dbPrint("Attempting reconnect with timeout: %i seconds. . ." % timeout)
-            self.close_connection() # try to free up some OS resources
+            self.close_connection()  # try to free up some OS resources
             time.sleep(timeout)
             WebSocketClient.__init__(self, self.urlArg)
         else:
@@ -316,7 +312,7 @@ class DDPClient(WebSocketClient):
         else:
             if isReconnect:
                 self._dbPrint("Reconnect successful!")
-                [ cb() for cb in self.reconnectCallbacks ]
+                [cb() for cb in self.reconnectCallbacks]
                 self.run_forever()
             else:
                 self._dbPrint("DDP connection established!")
@@ -340,14 +336,13 @@ class DDPClient(WebSocketClient):
         self._sendDict(connectionMsg, sendIfDisconnected=True)
         self._dbPrint("Sent DDP connection message to server.")
 
-
     def closed(self, code, reason=None):
         """Called when the connection is closed"""
 
         self.DDP_Connected = False
         self._dbPrint('DDP Connection Closed with code: {0}. Reason given: "{1}"'.format(code, reason))
 
-        [ cb(code, reason) for cb in self.closeCallbacks ]
+        [cb(code, reason) for cb in self.closeCallbacks]
 
         # If this was a scheduled loss of connection, go with it
         if self.closeRequested:
@@ -451,7 +446,7 @@ class DDPClient(WebSocketClient):
 
     def removeCollection(self, collectionName):
         if not hasattr(self.collections, collectionName):
-            self._dbPrint("Cannot remove collection named \""+collectionName+"\".  Does not exist.")
+            self._dbPrint("Cannot remove collection named \"" + collectionName + "\".  Does not exist.")
 
         self._getCollection(collectionName).clearAllObserveCallbacks()
         delattr(self.collections, collectionName)
@@ -534,7 +529,7 @@ class DDPClient(WebSocketClient):
 
     # Generate an id for DDP calls that come back with results (subscribe/method)
     def _generateOutstandingID(self, prefix='method'):
-        return prefix+"_" + str(uuid.uuid4())
+        return prefix + "_" + str(uuid.uuid4())
 
     #########################
     # User Facing Functions #
@@ -544,7 +539,7 @@ class DDPClient(WebSocketClient):
 
     def method(self, methodName, params=[], track=False):
         # Make a request ID, and set it to pending
-        mid = self._generateOutstandingID(prefix='method_'+methodName)
+        mid = self._generateOutstandingID(prefix='method_' + methodName)
 
         # Add to the track list if requested:
         if track:
@@ -590,13 +585,13 @@ class DDPClient(WebSocketClient):
             # a 'salt' key containing a uuid for the user's salt,
             # and an 'identity' key with the user's _id.
             server_challenge = self.methodSync('beginPasswordExchange', [{
-                'user': { 'username': username },
+                'user': {'username': username},
                 'A': A
             }])
 
             M = srp_user.respond_to_challenge(server_challenge)
 
-            server_verification = self.methodSync('login', [{ 'srp': { 'M': M } }])
+            server_verification = self.methodSync('login', [{'srp': {'M': M}}])
 
             srp_user.verify_confirmation(server_verification)
 
@@ -621,7 +616,7 @@ class DDPClient(WebSocketClient):
 
     def subscribe(self, subscriptionName, params=[]):
         # Make a request ID, and set it to pending
-        subscriptionMessageID = self._generateOutstandingID(prefix='subscription_'+subscriptionName)
+        subscriptionMessageID = self._generateOutstandingID(prefix='subscription_' + subscriptionName)
 
         # Track if desired
         self.requestsToTrack.append(subscriptionMessageID)
@@ -644,17 +639,19 @@ class DDPClient(WebSocketClient):
 
 
 if __name__ == "__main__":
-    ddpc = DDPClient("ws://192.168.1.30:3000/websocket", debugPrint=True)
+    ddpc = DDPClient("ws://localhost:3000/websocket", debugPrint=True)
     ddpc.connectDDP()
 
     # Subscribe to properties
-    subID = ddpc.subscribe("current-properties")
+    subID = ddpc.subscribe("someDocs")
     ddpc.getResult(subID)
 
     # Get a reactive dict like object from the collection
-    xPosition = ddpc.collections.prop.findOne({"property": "stage_x_position"})
+    fooDoc = ddpc.collections.prop.findOne({"foo": "bar"})
 
     # Reactivley get and set values in it
-    print(xPosition["_id"])
+    print(fooDoc)
+    fooDoc["foo2"] = "bar2"
+    print(fooDoc)
 
     ddpc.closeDDP()
