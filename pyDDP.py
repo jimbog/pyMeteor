@@ -1,8 +1,8 @@
 import json, pprint, socket, time, uuid
 from ws4py.client.threadedclient import WebSocketClient
 
-from . import srp
-from .dbPrint import Printer
+from srp import MeteorUser
+from dbPrint import Printer
 
 
 class ReactiveDict(dict):
