@@ -3,8 +3,8 @@ from __future__ import print_function
 import json, pprint, socket, time, uuid
 from ws4py.client.threadedclient import WebSocketClient
 
-from srp import MeteorUser
-from dbPrint import Printer
+from .srp import MeteorUser
+from .dbPrint import Printer
 
 
 class ReactiveDict(dict):
