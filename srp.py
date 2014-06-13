@@ -1,25 +1,5 @@
-  # N    A large safe prime (N = 2q+1, where q is prime)
-  #      All arithmetic is done modulo N.
-  # g    A generator modulo N
-  # k    Multiplier parameter (k = H(N, g) in SRP-6a, k = 3 for legacy SRP-6)
-  # s    User's salt
-  # I    Username
-  # p    Cleartext Password
-  # H()  One-way hash function
-  # ^    (Modular) Exponentiation
-  # u    Random scrambling parameter
-  # a,b  Secret ephemeral values
-  # A,B  Public ephemeral values
-  # x    Private key (derived from p and s)
-  # v    Password verifier
-
-# This uses code and architecture from the 'srp' package, described and licensed below:
-# Downloads (All Versions):
-# 10 downloads in the last day
-# 122 downloads in the last week
-# 526 downloads in the last month
+# This file uses code and architecture from the 'srp' package, described and licensed below:
 # Author: Tom Cocagne
-# Documentation: srp package documentation
 # Home Page: https://github.com/cocagne/pysrp
 # Download URL: http://pypi.python.org/pypi/srp
 # License:
@@ -45,6 +25,23 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+# Definitions (copied from original SRP source):
+#
+# N    A large safe prime (N = 2q+1, where q is prime)
+#      All arithmetic is done modulo N.
+# g    A generator modulo N
+# k    Multiplier parameter (k = H(N, g) in SRP-6a, k = 3 for legacy SRP-6)
+# s    User's salt
+# I    Username
+# p    Cleartext Password
+# H()  One-way hash function
+# ^    (Modular) Exponentiation
+# u    Random scrambling parameter
+# a,b  Secret ephemeral values
+# A,B  Public ephemeral values
+# x    Private key (derived from p and s)
+# v    Password verifier
 
 from __future__ import print_function
 
