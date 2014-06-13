@@ -13,6 +13,8 @@
   # x    Private key (derived from p and s)
   # v    Password verifier
 
+from __future__ import print_function
+
 import hashlib
 import os
 import binascii

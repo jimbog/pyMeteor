@@ -1,5 +1,6 @@
-import sys
+from __future__ import print_function
 
+import sys
 
 def dbPrint(*args, **kwargs):
     print(*args, **kwargs)
